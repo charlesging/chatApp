@@ -35,16 +35,17 @@ const POST_MESSAGE = gql`
 
 const Messages = ({ user }) => {
   const { data } = useSubscription(GET_MESSAGES) // executes query
-
   if (!data) return null;
 
   return ( 
     <div style={{ marginBottom: '5rem' }}>
-      { data.messages.map(({ id, user, text }) => {
+      { data.messages.map(({ id, user: messageUser, text }) => {
+        const isUserMessage = user === messageUser
+        console.log(user, messageUser)
         return (
-          <div key={id} style={{ textAlign: 'right' }}>
-            <p style={{ marginBottom: '0.3rem' }}>{user}</p>
-            <Chip style={{ fontSize: '0.9rem' }} color='primary' label={text} />
+          <div key={id} style={{ textAlign: isUserMessage ? 'right' : 'left' }}>
+            <p style={{ marginBottom: '0.3rem' }}>{messageUser}</p>
+            <Chip style={{ fontSize: '0.9rem' }} color={ isUserMessage ? 'primary' : 'secondary' } label={text} />
           </div>
         );
       })}
@@ -72,7 +73,7 @@ export const Chat = () => {
   return (
     <Container>
       <h3>Welcome to a simple chat app using GraphQL subscriptions!</h3>
-      <Messages/>
+      <Messages user={user} />
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <TextField 
